@@ -106,6 +106,8 @@
   }
 
   function main() {
+    window.document.head.innerHTML = '<head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"></head>';
+    window.document.body.innerHTML = '<body><iframe id="testPage" height="600" width="100%" src="https://jedi1.qiaofangyun.com/V20ceshishangxianmao_saas2_88a1796ee/evoProperty/list?type=sell"></iframe><div id="final_data"></div></body>';
     var a = 0;
     // 每隔10秒跑一次
     var mainTimer = setInterval(function () {
