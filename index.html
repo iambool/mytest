@@ -8,8 +8,7 @@
 </head>
 
 <body>
-  <iframe id="testPage" height="600" width="100%"
-    src="https://jedi1.qiaofangyun.com/V20ceshishangxianmao_saas2_88a1796ee/evoProperty/list?type=sell"></iframe>
+  <iframe id="testPage" height="600" width="100%" src="https://www.baidu.com"></iframe>
   <div id="final_data"></div>
 </body>
 
@@ -17,7 +16,7 @@
   var final_data = [];
   var start_timestamp;
   var end_timestamp;
-  var testUrl = "https://jedi1.qiaofangyun.com/V20ceshishangxianmao_saas2_88a1796ee/evoProperty/list?type=sell";
+  var testUrl = "https://www.baidu.com";
   var xpaths = [
     '//*[@id="jedi-app-content"]/form/div/div[3]/div[3]/div/div/div/div[1]/div/div[2]/table[2]/tbody/tr[2]/td[3]/div[1]/span', // 房源列表第一项xpath
   ];
@@ -107,7 +106,7 @@
 
   function main() {
     window.document.head.innerHTML = '<head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"></head>';
-    window.document.body.innerHTML = '<body><iframe id="testPage" height="600" width="100%" src="https://jedi1.qiaofangyun.com/V20ceshishangxianmao_saas2_88a1796ee/evoProperty/list?type=sell"></iframe><div id="final_data"></div></body>';
+    window.document.body.innerHTML = '<body><iframe id="testPage" height="600" width="100%" src="https://www.baidu.com"></iframe><div id="final_data"></div></body>';
     var a = 0;
     // 每隔10秒跑一次
     var mainTimer = setInterval(function () {
