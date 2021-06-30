@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>客户端测试</title>
+</head>
+
+<body>
+  <iframe id="testPage" height="600" width="100%"
+    src="https://jedi1.qiaofangyun.com/V20ceshishangxianmao_saas2_88a1796ee/evoProperty/list?type=sell"></iframe>
+  <div id="final_data"></div>
+</body>
+
+<Script>
+  var final_data = [];
+  var start_timestamp;
+  var end_timestamp;
+  var testUrl = "https://jedi1.qiaofangyun.com/V20ceshishangxianmao_saas2_88a1796ee/evoProperty/list?type=sell";
+  var xpaths = [
+    '//*[@id="jedi-app-content"]/form/div/div[3]/div[3]/div/div/div/div[1]/div/div[2]/table[2]/tbody/tr[2]/td[3]/div[1]/span', // 房源列表第一项xpath
+  ];
+  var iframeWindow;
+
+  // 根据Xpath获取元素（必定唯一）
+  function getElementByXpath(crtDocument, path) {
+    return crtDocument.evaluate(path, crtDocument, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+  }
+
+  // 刷新页面
+  function reloadPage(crtDocument) {
+    crtDocument.location.reload();
+  }
+
+  // 获取当前时间戳（毫秒）
+  function getCurrentTimeStamp() {
+    return new Date().getTime()
+  }
+
+  // 延时函数（毫秒）
+  // function sleep(time) {
+  //   var startTime = new Date().getTime() + parseInt(time, 10);
+  //   while (new Date().getTime() < startTime) { }
+  // }
+
+  function getResult(start, end, time) {
+    // final_data.push({
+    //   dns_analysis: time.domainLookupEnd - time.domainLookupStart,
+    //   tcp_handshake: time.connectEnd - time.connectStart,
+    //   http_response: time.responseEnd - time.requestStart,
+    //   before_dom_load: time.responseEnd - time.navigationStart,
+    //   dom_load: time.domComplete - time.domLoading,
+    //   dom_analysis: time.domInteractive - time.domLoading,
+    //   script_load: time.domContentLoadedEventEnd - time.domContentLoadedEventStart,
+    //   onload_event_time: time.loadEventEnd - time.loadEventStart,
+    //   whole_load_time: time.loadEventEnd - time.fetchStart,
+    //   create_time: getCurrentTimeStamp(),
+    //   user_load_time: end_timestamp - start_timestamp,
+    // });
+    final_data.push([
+      time.domainLookupEnd - time.domainLookupStart,
+      time.connectEnd - time.connectStart,
+      time.responseEnd - time.requestStart,
+      time.responseEnd - time.navigationStart,
+      time.domComplete - time.domLoading,
+      time.domInteractive - time.domLoading,
+      time.domContentLoadedEventEnd - time.domContentLoadedEventStart,
+      time.loadEventEnd - time.loadEventStart,
+      time.loadEventEnd - time.fetchStart,
+      getCurrentTimeStamp(),
+      end_timestamp - start_timestamp,
+    ]);
+    // console.log('首屏加载时长：' + (end_timestamp - start_timestamp) + 'ms');
+    // console.log('DNS解析时间：' + (time.domainLookupEnd - time.domainLookupStart) + 'ms');
+    // console.log('TCP完成握手时间：' + (time.connectEnd - time.connectStart) + 'ms');
+    // console.log('HTTP请求响应完成时间：' + (time.responseEnd - time.requestStart) + 'ms');
+    // console.log('DOM开始加载前所花费时间：' + (time.responseEnd - time.navigationStart) + 'ms');
+    // console.log('DOM加载完成时间：' + (time.domComplete - time.domLoading) + 'ms');
+    // console.log('DOM结构解析完成时间：' + (time.domInteractive - time.domLoading) + 'ms');
+    // console.log('脚本加载时间：' + (time.domContentLoadedEventEnd - time.domContentLoadedEventStart) + 'ms');
+    // console.log('onload事件时间：' + (time.loadEventEnd - time.loadEventStart) + 'ms');
+    // console.log('页面完全加载时间：' + (time.loadEventEnd - time.fetchStart) + 'ms');
+  }
+
+  // 每隔0.1s检查一次是否已经加载完成
+  function checkIsLoaded(iwindow) {
+    var timer = setInterval(function () {
+      var stat = xpaths.every(function (item) {
+        return !!getElementByXpath(iwindow.document, item);
+      });
+      if (stat) {
+        end_timestamp = getCurrentTimeStamp();
+        getResult(start_timestamp, end_timestamp, iwindow.performance?.timing);
+        clearInterval(timer);
+      }
+    }, 100);
+  }
+
+  function oneTest() {
+    iframeWindow = document.getElementById("testPage").contentWindow;
+    start_timestamp = getCurrentTimeStamp();
+    reloadPage(iframeWindow.document);
+    iframeWindow = document.getElementById("testPage").contentWindow;
+    setTimeout(checkIsLoaded(iframeWindow), 2000); // 2秒后校验是否加载完成
+  }
+
+  function main() {
+    var a = 0;
+    // 每隔10秒跑一次
+    var mainTimer = setInterval(function () {
+      oneTest();
+      console.log(a);
+      a++;
+      if (a > 30) {
+        var b = window.document.getElementById("final_data");
+        b.innerHTML = JSON.stringify(final_data);
+        // console.log(JSON.stringify(final_data));
+        clearInterval(mainTimer);
+      }
+    }, 10000);
+  }
+</Script>
+
+</html>
